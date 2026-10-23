@@ -1,19 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+  
 <head>
   <meta charset="utf-8">
   <title>A1: Hello World, GitHub and d3</title>
 </head>
+
 <body>
   <div id="container"></div>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script>
     console.log("d3 version", d3.version); // test that d3 loaded
+
     // Add an SVG
+    const svg = d3.select("#container").append("svg").attr("width", 1700).attr("height", 1000);
+
+
     // Add Rectangles
+    //body
+    svg.append("rect").attr("x", 450).attr("y", 570).attr("width", 100).attr("height", 200).attr("fill", "blue").attr("stroke", "red").attr("stroke-width", 5);
+    //image display box at the top right
+    svg.append("rect").attr("x", 1200).attr("y", 60).attr("width", 420).attr("height", 300).attr("rx", 15).attr("fill", "white").attr("stroke", "#64748b").attr("stroke-width", 5);
+    
+    //image: replace this URL with any image URL
+    svg.append("image").attr("href", "").attr("x", 1215).attr("y", 75).attr("width", 390).attr("height", 270).attr("preserveAspectRatio", "xMidYMid slice");
+    //remove after placing an image
+    svg.append("text").attr("x", 1410).attr("y", 117).attr("text-anchor", "middle").attr("font-size", 25).attr("font-weight", "bold").attr("fill", "black").text("Great Person Image!");
+
+
     // Add Circles
+    //head
+    svg.append("circle").attr("cx", 510).attr("cy", 510).attr("r", 51) .attr("fill", "#FFFFB8").attr("stroke", "red").attr("stroke-width", 5);
+    //left eye
+    svg.append("circle").attr("cx", 493).attr("cy", 500).attr("r", 4).attr("fill", "black");
+    //right eye
+    svg.append("circle").attr("cx", 527).attr("cy", 500).attr("r", 4).attr("fill", "black");
+    
+
     // Add Lines
+    //base line
+    svg.append("line").attr("x1", 10).attr("y1", 990).attr("x2", 1700).attr("y2", 990).attr("stroke", "black").attr("stroke-width", 17);
+    //starting left leg
+    svg.append("line").attr("x1", 490).attr("y1", 770).attr("x2", 480).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
+    //starting right leg
+    svg.append("line").attr("x1", 530).attr("y1", 770).attr("x2", 540).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
+    //starting left arm
+    const LeftArm = svg.append("line").attr("x1", 450).attr("y1", 600).attr("x2", 400).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
+    //starting right arm
+    const RightArm = svg.append("line").attr("x1", 550).attr("y1", 600).attr("x2", 600).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
+
+
     // Add Polygons
+    //pocket
+    svg.append("polygon").attr("points", "550,600 510,600 510,650 550,650").attr("fill", "green").attr("stroke", "red").attr("stroke-width", 5);
+    //starting left feet
+    svg.append("polygon").attr("points", "490,960 470,960 470,980 510,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
+    //starting right feet
+    svg.append("polygon").attr("points", "550,960 530,960 530,980 570,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
+  
+
+    //mouth
+    svg.append("path").attr("d", "M490,525 Q510,545 530,525").attr("fill", "none").attr("stroke", "black").attr("stroke-width", 4);
+
+  
+    //movement
+    // Repeatedly raise and lower each arm
+    function animateArm(arm, raisedX, raisedY,loweredX, loweredY) {
+      function repeat() {
+        arm.transition()
+          .duration(800)
+          .ease(d3.easeCubicInOut)
+          .attr("x2", raisedX)
+          .attr("y2", raisedY)
+          .transition()
+          .duration(800)
+          .ease(d3.easeCubicInOut)
+          .attr("x2", loweredX)
+          .attr("y2", loweredY)
+          .on("end", repeat);
+      }
+
+      repeat();
+    }
+
+    // Both arms praise the image by waving upward
+    animateArm(LeftArm, 350, 420, 400, 800);
+    animateArm(RightArm, 650, 420, 600, 800);
+    
   </script>
 </body>
 </html>
