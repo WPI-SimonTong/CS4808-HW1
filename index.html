@@ -7,6 +7,10 @@
 </head>
 
 <body>
+
+  <button id="uploadButton" type="button">Upload Any Image</button>
+  <input type="file" id="imageInput" accept="image/*" hidden/>
+
   <div id="container"></div>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script>
@@ -20,12 +24,12 @@
     //body
     svg.append("rect").attr("x", 450).attr("y", 570).attr("width", 100).attr("height", 200).attr("fill", "blue").attr("stroke", "red").attr("stroke-width", 5);
     //image display box at the top right
-    svg.append("rect").attr("x", 1200).attr("y", 60).attr("width", 420).attr("height", 300).attr("rx", 15).attr("fill", "white").attr("stroke", "#64748b").attr("stroke-width", 5);
+    svg.append("rect").attr("x", 1200).attr("y", 60).attr("width", 420).attr("height", 300).attr("rx", 15).attr("fill", "white").attr("stroke", "#64748b").attr("stroke-width", 5);    
     
-    //image: replace this URL with any image URL
-    svg.append("image").attr("href", "").attr("x", 1215).attr("y", 75).attr("width", 390).attr("height", 270).attr("preserveAspectRatio", "xMidYMid slice");
-    //remove after placing an image
-    svg.append("text").attr("x", 1410).attr("y", 117).attr("text-anchor", "middle").attr("font-size", 25).attr("font-weight", "bold").attr("fill", "black").text("Great Person Image!");
+    //image frame, don't remove this, it is used to display the image
+    const image = svg.append("image").attr("x", 1215).attr("y", 75).attr("width", 390).attr("height", 270).attr("preserveAspectRatio", "xMidYMid meet").style("display", "none");
+    //will be removed after placing an image
+    const placeholder = svg.append("text").attr("x", 1410).attr("y", 117).attr("text-anchor", "middle").attr("font-size", 25).attr("font-weight", "bold").attr("fill", "black").text("Great Person Image!");
 
 
     // Add Circles
@@ -70,13 +74,11 @@
         arm.transition()
           .duration(800)
           .ease(d3.easeCubicInOut)
-          .attr("x2", raisedX)
-          .attr("y2", raisedY)
+          .attr("x2", raisedX).attr("y2", raisedY)
           .transition()
           .duration(800)
           .ease(d3.easeCubicInOut)
-          .attr("x2", loweredX)
-          .attr("y2", loweredY)
+          .attr("x2", loweredX).attr("y2", loweredY)
           .on("end", repeat);
       }
 
@@ -87,6 +89,53 @@
     animateArm(LeftArm, 350, 420, 400, 800);
     animateArm(RightArm, 650, 420, 600, 800);
     
+
+    // Open the file picker when the button is clicked
+    d3.select("#uploadButton").on("click", function () {
+      document.getElementById("imageInput").click();
+    });
+
+    // Display the selected image
+    d3.select("#imageInput").on("change", function (event) {
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+      // Ensure the selected file is an image
+      if (!file.type.startsWith("image/")) {
+        alert("PLEASE select an image file:)");
+        return;
+      }
+
+      // Create a temporary URL for the selected image
+      const imageURL = URL.createObjectURL(file);
+
+      // Display the image in the SVG box
+      image.attr("href", imageURL).style("display", "block");
+
+      // Hide the placeholder text
+      placeholder.style("display", "none");
+    });
   </script>
+  
+  <style>
+    #uploadButton {
+      position: absolute;
+      left: 1260px;
+      top: 220px;
+
+      padding: 8px 16px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #uploadButton:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
 </body>
 </html>
