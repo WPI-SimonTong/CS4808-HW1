@@ -19,10 +19,12 @@
     // Add an SVG
     const svg = d3.select("#container").append("svg").attr("width", 1700).attr("height", 1000);
 
+    // Group all parts of the person so they can move together
+    const person = svg.append("g").attr("id", "person");
 
     // Add Rectangles
     //body
-    svg.append("rect").attr("x", 450).attr("y", 570).attr("width", 100).attr("height", 200).attr("fill", "blue").attr("stroke", "red").attr("stroke-width", 5);
+    person.append("rect").attr("x", 450).attr("y", 570).attr("width", 100).attr("height", 200).attr("fill", "blue").attr("stroke", "red").attr("stroke-width", 5);
     //image display box at the top right
     svg.append("rect").attr("x", 1200).attr("y", 60).attr("width", 420).attr("height", 300).attr("rx", 15).attr("fill", "white").attr("stroke", "#64748b").attr("stroke-width", 5);    
     
@@ -34,41 +36,41 @@
 
     // Add Circles
     //head
-    svg.append("circle").attr("cx", 510).attr("cy", 510).attr("r", 51) .attr("fill", "#FFFFB8").attr("stroke", "red").attr("stroke-width", 5);
+    person.append("circle").attr("cx", 510).attr("cy", 510).attr("r", 51) .attr("fill", "#FFFFB8").attr("stroke", "red").attr("stroke-width", 5);
     //left eye
-    svg.append("circle").attr("cx", 493).attr("cy", 500).attr("r", 4).attr("fill", "black");
+    person.append("circle").attr("cx", 493).attr("cy", 500).attr("r", 4).attr("fill", "black");
     //right eye
-    svg.append("circle").attr("cx", 527).attr("cy", 500).attr("r", 4).attr("fill", "black");
+    person.append("circle").attr("cx", 527).attr("cy", 500).attr("r", 4).attr("fill", "black");
     
 
     // Add Lines
-    //base line
+    //base line/ground
     svg.append("line").attr("x1", 10).attr("y1", 990).attr("x2", 1700).attr("y2", 990).attr("stroke", "black").attr("stroke-width", 17);
     //starting left leg
-    svg.append("line").attr("x1", 490).attr("y1", 770).attr("x2", 480).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
+    person.append("line").attr("x1", 490).attr("y1", 770).attr("x2", 480).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
     //starting right leg
-    svg.append("line").attr("x1", 530).attr("y1", 770).attr("x2", 540).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
+    person.append("line").attr("x1", 530).attr("y1", 770).attr("x2", 540).attr("y2", 960).attr("stroke", "black").attr("stroke-width", 20);
     //starting left arm
-    const LeftArm = svg.append("line").attr("x1", 450).attr("y1", 600).attr("x2", 400).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
+    const LeftArm = person.append("line").attr("x1", 450).attr("y1", 600).attr("x2", 400).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
     //starting right arm
-    const RightArm = svg.append("line").attr("x1", 550).attr("y1", 600).attr("x2", 600).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
+    const RightArm = person.append("line").attr("x1", 550).attr("y1", 600).attr("x2", 600).attr("y2", 800).attr("stroke", "yellow").attr("stroke-width", 10);
 
 
     // Add Polygons
     //pocket
-    svg.append("polygon").attr("points", "550,600 510,600 510,650 550,650").attr("fill", "green").attr("stroke", "red").attr("stroke-width", 5);
+    person.append("polygon").attr("points", "550,600 510,600 510,650 550,650").attr("fill", "green").attr("stroke", "red").attr("stroke-width", 5);
     //starting left feet
-    svg.append("polygon").attr("points", "490,960 470,960 470,980 510,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
+    person.append("polygon").attr("points", "490,960 470,960 470,980 510,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
     //starting right feet
-    svg.append("polygon").attr("points", "550,960 530,960 530,980 570,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
+    person.append("polygon").attr("points", "550,960 530,960 530,980 570,980").attr("fill", "black").attr("stroke", "red").attr("stroke-width", 5);
   
 
     //mouth
-    svg.append("path").attr("d", "M490,525 Q510,545 530,525").attr("fill", "none").attr("stroke", "black").attr("stroke-width", 4);
+    person.append("path").attr("d", "M490,525 Q510,545 530,525").attr("fill", "none").attr("stroke", "black").attr("stroke-width", 4);
 
   
     //movement
-    // Repeatedly raise and lower each arm
+    //repeatedly raise and lower each arm
     function animateArm(arm, raisedX, raisedY,loweredX, loweredY) {
       function repeat() {
         arm.transition()
@@ -85,36 +87,63 @@
       repeat();
     }
 
-    // Both arms praise the image by waving upward
+    //both arms praise the image by waving upward
     animateArm(LeftArm, 350, 420, 400, 800);
     animateArm(RightArm, 650, 420, 600, 800);
     
 
-    // Open the file picker when the button is clicked
+    //open the file picker when the button is clicked
     d3.select("#uploadButton").on("click", function () {
       document.getElementById("imageInput").click();
     });
 
-    // Display the selected image
+    //display the selected image
     d3.select("#imageInput").on("change", function (event) {
       const file = event.target.files[0];
-
       if (!file) return;
 
-      // Ensure the selected file is an image
+      //ensure the selected file is an image
       if (!file.type.startsWith("image/")) {
         alert("PLEASE select an image file:)");
         return;
       }
 
-      // Create a temporary URL for the selected image
-      const imageURL = URL.createObjectURL(file);
+      const imageURL = URL.createObjectURL(file); //create a temporary URL for the selected image
+      image.attr("href", imageURL).style("display", "block"); //display the selected image in the SVG box
+      placeholder.style("display", "none"); //hide the placeholder text after image is displayed
 
-      // Display the image in the SVG box
-      image.attr("href", imageURL).style("display", "block");
+      d3.select("#uploadButton").style("display", "none");  //hide the upload button after a successful upload
+    });
 
-      // Hide the placeholder text
-      placeholder.style("display", "none");
+    //keyboard controls for moving the person left and right
+    let personX = 0;
+
+    const moveStep = 20;  //distance moved per key press
+    const boardWidth = 1700;  //width of the SVG board
+
+    const personMinX = 340; //horizontal boundaries of the person
+    const personMaxX = 680;
+
+    window.addEventListener("keydown", function (event) {
+      const key = event.key.toLowerCase();
+
+      // Move left with A or Left Arrow
+      if (key === "a" || key === "arrowleft") {
+        event.preventDefault();
+        personX -= moveStep;
+      }
+      // Move right with D or Right Arrow
+      else if (key === "d" || key === "arrowright") {
+        event.preventDefault();
+        personX += moveStep;
+      }
+      else {
+        return;
+      }
+
+      personX = Math.max(-personMinX, Math.min(boardWidth - personMaxX, personX));  //check if person is Out Of Bounds
+
+      person.attr("transform", `translate(${personX}, 0)`); //move the entire person horizontally
     });
   </script>
   
@@ -125,7 +154,7 @@
       top: 220px;
 
       padding: 8px 16px;
-      background-color: #2563eb;
+      background-color: #006767;
       color: white;
       border: none;
       border-radius: 6px;
@@ -134,7 +163,7 @@
     }
 
     #uploadButton:hover {
-      background-color: #1d4ed8;
+      background-color: #676700;
     }
   </style>
 </body>
